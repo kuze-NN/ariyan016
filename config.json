@@ -12,7 +12,7 @@
   "antiInbox": false,
   "language": "en",
   "notesLanguage": "change to your language with ISO 639-1 code, available languages: vi (Vietnamese), en (English)",
-  "nickNameBot": "GoatBot",
+  "nickNameBot": "Hinata bbz",
   "prefix": "-",
   "api": "https://www.noobs-api.rf.gd/dipto",
   "approval": false,
@@ -31,10 +31,9 @@
     "ignoreCommand": []
   },
   "adminBot": [
-    "61552258402755"
-  ],
+    "100075928853166"  ],
   "mainAdmin": [
-    "61552258402755"
+    "100075928853166"
   ],
   "whiteListMode": {
     "enable": true,
