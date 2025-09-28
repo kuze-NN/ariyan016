@@ -1,53 +1,43 @@
 const axios = require("axios");
+
 const baseApiUrl = async () => {
-  const base = await axios.get(
-    `https://raw.githubusercontent.com/Blankid018/D1PT0/main/baseApiUrl.json`
-  );
-  return base.data.api;
-};
-module.exports.config = {
-  name: "namaz",
-  aliases: ["prayer"],
-  version: "1.0",
-  author: "Mesbah Bb'e",
-  countDown: 5,
-  role: 0,
-  description: {
-    en: "View Prayer time",
-  },
-  category: "𝗜𝗦𝗟𝗔𝗠",
-  guide: {
-    en: "{pn} <city name>",
-  },
+  const base = await axios.get("https://raw.githubusercontent.com/mahmudx7/exe/main/baseApiUrl.json");
+  return base.data.mahmud;
 };
 
-module.exports.onStart = async function ({ api, args, event }) {
-  try {
-    const cityName = args.join(" ");
-    const apiUrl = `${await baseApiUrl()}/namaj?cityName=${encodeURIComponent(cityName)}`;
-    const response = await axios.get(apiUrl);
-    const {
-      fajr,
-      sunrise,
-      dhuhr,
-      asr,
-      maghrib,
-      isha
-    } = response.data.prayerTimes;
+module.exports = {
+  config: {
+    name: "namaz",
+    aliases: ["prayer", "salah"],
+    version: "1.7",
+    author: "MahMUD",
+    countDown: 5,
+    role: 0,
+    category: "Islamic",
+    guide: "{pn} <city>\nExample: {pn} Dhaka"
+  },
 
-    const prayerTimes =
-      "🕋🌙 𝙿𝚛𝚊𝚢𝚎𝚛 𝚝𝚒𝚖𝚎𝚜 🕋🌙\n" +
-      "🏙️ 𝙲𝚒𝚝𝚢 𝙽𝚊𝚖𝚎: " + cityName + "\n\n" +
-      "🕌 𝙵𝚊𝚓𝚛: " + fajr + "\n" +
-      "🕌 𝚂𝚞𝚗𝚛𝚒𝚜𝚎: " + sunrise + "\n" +
-      "🕌 𝙳𝚑𝚞𝚛: " + dhuhr + "\n\n" +
-      "🕌 𝙰𝚜𝚛: " + asr + "\n" +
-      "🕌 𝙼𝚊𝚐𝚑𝚛𝚒𝚋: " + maghrib + "\n" +
-      "🕌 𝙸𝚜𝚑𝚊: " + isha + "\n";
+  onStart: async function ({ message, args }) {
+    const city = args.join(" ") || "Dhaka";
+    const apiUrl = `${await baseApiUrl()}/api/namaz/font3/${encodeURIComponent(city)}`;
 
-    api.sendMessage(prayerTimes, event.threadID);
-  } catch (e) {
-    console.error(e);
-    api.sendMessage(`Error: ${e.message}`, event.threadID);
+    try {
+      const response = await axios.get(apiUrl, {
+        headers: { "author": module.exports.config.author }
+      });
+
+      if (response.data?.error) {
+        return message.reply(`${response.data.error}`);
+      }
+
+      if (response.data?.message) {
+        return message.reply(response.data.message);
+      }
+
+      return message.reply(`No prayer times available for ${city}.`);
+    } catch (error) {
+      console.error(error);
+      return message.reply("Error fetching prayer times. Please try again later.");
+    }
   }
 };
